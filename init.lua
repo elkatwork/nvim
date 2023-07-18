@@ -108,8 +108,24 @@ require('lazy').setup({
       options = {
         icons_enabled = true,
         theme = 'solarized_dark',
-        component_separators = '|',
-        section_separators = '',
+        -- component_separators = '|',
+        -- section_separators = '',
+      },
+      sections = {
+        lualine_c = {
+          {
+            "filename",
+            path = 1,
+          }
+        },
+      },
+      tabline = {
+        lualine_a = {
+          {
+            "tabs",
+            mode = 2,
+          },
+        },
       },
     },
   },
