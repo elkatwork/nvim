@@ -573,8 +573,10 @@ map('n', '<A-l>', '<C-w>l')
 map('n', '<A-j>', '<C-w>j')
 map('n', '<A-k>', '<C-w>k')
 
--- active code action popup
+-- LSP shortcuts
 map('n', '<leader>ca', ':lua vim.lsp.buf.code_action()<CR>')
+map('n', 'gd', ':lua vim.lsp.buf.definition()<CR>')
+map('n', 'K', ':lua vim.lsp.buf.hover()<CR>')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
