@@ -1,5 +1,3 @@
-vim.g.mapleader = '\\'
-vim.g.maplocalleader = '\\'
 
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
@@ -577,6 +575,9 @@ map('n', '<A-k>', '<C-w>k')
 map('n', '<leader>ca', ':lua vim.lsp.buf.code_action()<CR>')
 map('n', 'gd', ':lua vim.lsp.buf.definition()<CR>')
 map('n', 'K', ':lua vim.lsp.buf.hover()<CR>')
+
+-- align by equals signs
+map('v', '<leader>=', ":'<,'>! column -t -s= -o=<CR>")
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
