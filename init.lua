@@ -548,6 +548,8 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 vim.cmd.colorscheme('solarized')
+-- no line wrapping
+vim.wo.wrap = false
 
 -- Key mappings
 local function map(mode, lhs, rhs, opts)
