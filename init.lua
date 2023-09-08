@@ -135,7 +135,7 @@ require('lazy').setup({
     -- See `:help indent_blankline.txt`
     opts = {
       char = '┊',
-      show_trailing_blankline_indent = false,
+      -- show_trailing_blankline_indent = false,
     },
   },
 
@@ -577,6 +577,9 @@ map('n', '<A-k>', '<C-w>k')
 map('n', '<leader>ca', ':lua vim.lsp.buf.code_action()<CR>')
 map('n', 'gd', ':lua vim.lsp.buf.definition()<CR>')
 map('n', 'K', ':lua vim.lsp.buf.hover()<CR>')
+-- LSP format on save
+vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
+
 
 -- align by equals signs
 map('v', '<leader>=', ":'<,'>! column -t -s= -o=<CR>")
