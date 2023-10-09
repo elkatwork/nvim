@@ -455,7 +455,7 @@ local servers = {
 
   arduino_language_server = {},
 
-  -- pyright = {},
+  pyright = {},
   -- rust_analyzer = {},
   -- tsserver = {},
 
@@ -465,6 +465,8 @@ local servers = {
       telemetry = { enable = false },
     },
   },
+
+  terraformls = {},
 }
 
 -- Setup neovim lua configuration
