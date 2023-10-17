@@ -14,6 +14,11 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local indentation_highlight = {
+  "Whitespace",
+  "CursorColumn",
+}
+
 -- plugins
 require('lazy').setup({
   -- Git related plugins
@@ -132,12 +137,19 @@ require('lazy').setup({
   {
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
+    main = "ibl",
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
     opts = {
-      char = '┊',
-      -- show_trailing_blankline_indent = false,
+      indent = { highlight = indentation_highlight, char = "" },
+      whitespace = {
+        highlight = indentation_highlight,
+        remove_blankline_trail = false,
+      },
     },
+    --   char = '┊',
+    --   -- show_trailing_blankline_indent = false,
+    -- },
   },
 
   -- "gc" to comment visual regions/lines
