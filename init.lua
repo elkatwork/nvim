@@ -335,7 +335,12 @@ require('nvim-treesitter.configs').setup {
   auto_install = true,
 
   highlight = { enable = true },
-  indent = { enable = true },
+  indent = {
+    enable = true,
+    disable = {
+      "dart"
+    },
+  },
   incremental_selection = {
     enable = true,
     keymaps = {
@@ -470,7 +475,7 @@ local servers = {
 
   pyright = {},
   -- rust_analyzer = {},
-  tsserver = {},
+  --tsserver = {},
 
   lua_ls = {
     Lua = {
@@ -551,6 +556,15 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+  },
+}
+
+-- flutter-tools
+require("flutter-tools").setup {
+  lsp = {
+    settings = {
+      lineLength = 200,
+    },
   },
 }
 
