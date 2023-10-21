@@ -65,8 +65,8 @@ require('lazy').setup({
     },
   },
 
-  -- Useful plugin to show you pending keybinds.
-  -- { 'folke/which-key.nvim', opts = {} },
+  -- Debugger
+  'mfussenegger/nvim-dap',
 
   {
     -- Adds git releated signs to the gutter, as well as utilities for managing changes
@@ -561,22 +561,23 @@ cmp.setup {
 
 -- flutter-tools
 require("flutter-tools").setup {
+  debugger = {
+    enabled = true,
+    register_configurations = function(_)
+      require("dap").configurations.dart = {}
+      require("dap.ext.vscode").load_launchjs()
+    end,
+  },
+  dev_log = {
+    enabled = true,
+  },
   lsp = {
     settings = {
       lineLength = 200,
+      enableSdkFormatter = true,
     },
   },
 }
-
--- go.vim: run goimport and gofmt on save
-local format_sync_grp = vim.api.nvim_create_augroup("GoImport", {})
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.go",
-  callback = function()
-    require('go.format').goimport()
-  end,
-  group = format_sync_grp,
-})
 
 vim.cmd.colorscheme('solarized')
 -- no line wrapping
@@ -611,6 +612,31 @@ map('n', 'K', ':lua vim.lsp.buf.hover()<CR>')
 -- LSP format on save
 vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
 
+-- debugger - default from https://github.com/mfussenegger/nvim-dap/blob/master/doc/dap.txt
+vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
+vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
+vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
+vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
+vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end)
+vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint() end)
+vim.keymap.set('n', '<Leader>lp',
+  function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
+vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
+vim.keymap.set({ 'n', 'v' }, '<Leader>dh', function()
+  require('dap.ui.widgets').hover()
+end)
+vim.keymap.set({ 'n', 'v' }, '<Leader>dp', function()
+  require('dap.ui.widgets').preview()
+end)
+vim.keymap.set('n', '<Leader>df', function()
+  local widgets = require('dap.ui.widgets')
+  widgets.centered_float(widgets.frames)
+end)
+vim.keymap.set('n', '<Leader>ds', function()
+  local widgets = require('dap.ui.widgets')
+  widgets.centered_float(widgets.scopes)
+end)
 
 -- align by equals signs
 map('v', '<leader>=', ":'<,'>! column -t -s= -o=<CR>")
