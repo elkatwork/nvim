@@ -13,6 +13,7 @@ if not vim.loop.fs_stat(lazypath) then
   }
 end
 vim.opt.rtp:prepend(lazypath)
+local java_filetypes = { "java" }
 
 local indentation_highlight = {
   "Whitespace",
@@ -63,6 +64,13 @@ require('lazy').setup({
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
     },
+  },
+
+  {
+    "ray-x/lsp_signature.nvim",
+    event = "VeryLazy",
+    opts = {},
+    config = function(_, opts) require 'lsp_signature'.setup(opts) end
   },
 
   -- Debugger
@@ -224,6 +232,8 @@ require('lazy').setup({
       })
     end,
   },
+
+  { 'sudormrfbin/cheatsheet.nvim' },
 
   { import = 'custom.plugins' },
 }, {})
@@ -477,6 +487,8 @@ local servers = {
   -- rust_analyzer = {},
   --tsserver = {},
 
+  jdtls = {},
+
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -640,6 +652,8 @@ end)
 
 -- align by equals signs
 map('v', '<leader>=', ":'<,'>! column -t -s= -o=<CR>")
+
+vim.wo.number = true
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
