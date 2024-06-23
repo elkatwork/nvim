@@ -13,7 +13,6 @@ if not vim.loop.fs_stat(lazypath) then
   }
 end
 vim.opt.rtp:prepend(lazypath)
-local java_filetypes = { "java" }
 
 local indentation_highlight = {
   "Whitespace",
@@ -234,6 +233,19 @@ require('lazy').setup({
   },
 
   { 'sudormrfbin/cheatsheet.nvim' },
+
+  {
+    "Exafunction/codeium.nvim",
+    event = 'BufEnter',
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "hrsh7th/nvim-cmp",
+    },
+    config = function()
+      require("codeium").setup({
+      })
+    end
+  },
 
   { import = 'custom.plugins' },
 }, {})
@@ -568,6 +580,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'codeium' },
   },
 }
 
@@ -616,6 +629,14 @@ map('n', '<A-h>', '<C-w>h')
 map('n', '<A-l>', '<C-w>l')
 map('n', '<A-j>', '<C-w>j')
 map('n', '<A-k>', '<C-w>k')
+map('t', '<A-h>', '<C-\\><C-N><C-w>h')
+map('t', '<A-j>', '<C-\\><C-N><C-w>j')
+map('t', '<A-k>', '<C-\\><C-N><C-w>k')
+map('t', '<A-l>', '<C-\\><C-N><C-w>l')
+map('i', '<A-h>', '<C-\\><C-N><C-w>h')
+map('i', '<A-j>', '<C-\\><C-N><C-w>j')
+map('i', '<A-k>', '<C-\\><C-N><C-w>k')
+map('i', '<A-l>', '<C-\\><C-N><C-w>l')
 
 -- LSP shortcuts
 map('n', '<leader>ca', ':lua vim.lsp.buf.code_action()<CR>')
@@ -649,6 +670,10 @@ vim.keymap.set('n', '<Leader>ds', function()
   local widgets = require('dap.ui.widgets')
   widgets.centered_float(widgets.scopes)
 end)
+
+-- make terminal usage nicer
+map('t', '<Esc>', '<C-\\><C-n>')
+map('n', '<leader>t', ':belowright split |terminal<CR>')
 
 -- align by equals signs
 map('v', '<leader>=', ":'<,'>! column -t -s= -o=<CR>")
