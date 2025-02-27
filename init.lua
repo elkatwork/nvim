@@ -235,16 +235,91 @@ require('lazy').setup({
   { 'sudormrfbin/cheatsheet.nvim' },
 
   {
-    "Exafunction/codeium.nvim",
-    event = 'BufEnter',
+    "zbirenbaum/copilot-cmp",
+    config = function() require("copilot_cmp").setup() end,
     dependencies = {
-      "nvim-lua/plenary.nvim",
-      "hrsh7th/nvim-cmp",
+      "zbirenbaum/copilot.lua",
+      cmd = "Copilot",
+      config = function()
+        require("copilot").setup({
+          suggestion = { enabled = false },
+          panel = { enabled = false },
+        })
+      end,
     },
-    config = function()
-      require("codeium").setup({
-      })
-    end
+  },
+
+  {
+    'rmagatti/auto-session',
+    lazy = false,
+
+    opts = {
+      suppressed_dirs = { '~/', '~/src', '~/Downloads', '/' },
+      -- log_level = 'debug',
+    },
+  },
+
+  {
+    "jmacadie/telescope-hierarchy.nvim",
+    dependencies = {
+      {
+        "nvim-telescope/telescope.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+      },
+    },
+    keys = {
+      { -- lazy style key map
+        -- Choose your own keys, this works for me
+        "<leader>si",
+        "<cmd>Telescope hierarchy incoming_calls<cr>",
+        desc = "LSP: [S]earch [I]ncoming Calls",
+      },
+      {
+        "<leader>so",
+        "<cmd>Telescope hierarchy outgoing_calls<cr>",
+        desc = "LSP: [S]earch [O]utgoing Calls",
+      },
+    },
+    opts = {
+      -- don't use `defaults = { }` here, do this in the main telescope spec
+      extensions = {
+        hierarchy = {
+          -- telescope-hierarchy.nvim config
+          -- these are the defaults and no need to reset them if you like these
+          initial_multi_expand = false, -- Run a multi-expand on open? If false, will only expand one layer deep by default
+          multi_depth = 5,            -- How many layers deep should a multi-expand go?
+          mappings = {
+            i = {},                   -- this plugin does not work in insert mode, as that would imply filtering the tree
+            --n = {
+            --  ["e"] = actions.expand,
+            --  --["e"] = false, -- to reset the 'e' key, if you don't want it mapped
+            --  ["E"] = actions.multi_expand,
+            --  ["l"] = actions.expand,
+            --  ["<RIGHT>"] = actions.expand,
+
+            --  ["c"] = actions.collapse,
+            --  ["h"] = actions.collapse,
+            --  ["<LEFT>"] = actions.collapse,
+
+            --  ["t"] = actions.toggle,
+            --  ["s"] = actions.switch,
+            --  ["d"] = actions.goto_definition,
+
+            --  ["q"] = actions.quit,
+            --},
+          },
+          layout_strategy = "horizontal",
+        },
+        -- no other extensions here, they can have their own spec too
+      },
+    },
+    config = function(_, opts)
+      -- Calling telescope's setup from multiple specs does not hurt, it will happily merge the
+      -- configs for us. We won't use data, as everything is in it's own namespace (telescope
+      -- defaults, as well as each extension).
+      require("telescope").setup(opts)
+      require("telescope").load_extension("hierarchy")
+    end,
   },
 
   { import = 'custom.plugins' },
@@ -262,6 +337,8 @@ vim.wo.number = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
+
+vim.opt.cursorline = true
 
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
@@ -493,11 +570,14 @@ local servers = {
     },
   },
 
-  arduino_language_server = {},
+  --arduino_language_server = {},
 
-  pyright = {},
+  basedpyright = {},
+
   -- rust_analyzer = {},
-  --tsserver = {},
+  ts_ls = {
+    cmd = { "npx", "typescript-language-server", "--stdio" }
+  },
 
   jdtls = {},
 
@@ -533,6 +613,18 @@ mason_lspconfig.setup_handlers {
       settings = servers[server_name],
     }
   end,
+}
+capabilities["workspace"] = {
+  didChangeWatchedFiles = {
+    dynamicRegistration = true,
+  },
+}
+require 'lspconfig'.sourcekit.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  cmd = {
+    vim.trim(vim.fn.system("xcrun -f sourcekit-lsp")), -- maybe just "xcrun sourcekit-lsp" would be enough?
+  },
 }
 
 -- [[ Configure nvim-cmp ]]
@@ -580,7 +672,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
-    { name = 'codeium' },
+    { name = 'copilot' },
   },
 }
 
@@ -598,7 +690,7 @@ require("flutter-tools").setup {
   },
   lsp = {
     settings = {
-      lineLength = 200,
+      lineLength = 300,
       enableSdkFormatter = true,
     },
   },
@@ -619,6 +711,8 @@ end
 
 -- clear search highlight
 map('n', '<leader>ns', ':nohlsearch<CR>')
+-- git blame
+map('n', '<leader>gb', ':Git blame<CR>')
 
 -- resize windows
 map('n', '<C-h>', ':vertical resize -2<CR>')
@@ -677,8 +771,6 @@ map('n', '<leader>t', ':belowright split |terminal<CR>')
 
 -- align by equals signs
 map('v', '<leader>=', ":'<,'>! column -t -s= -o=<CR>")
-
-vim.wo.number = true
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
